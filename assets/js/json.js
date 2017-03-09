@@ -7,9 +7,40 @@ $(document).ready(function(){
         loadDoc();
         console.log('clik');
     });
+
+    $('#autocomplete_location,#autocomplete_destination,.quanty').on('click', function() {
+    $('.calculate').show();
+    $('.reserveer').hide();
+    });
+
+    $('.dropdown-menu li').on('click', function() {
+        var persons = $(this).find('a').attr('data-person');
+        var drive = $(this).find('a').attr('data-drive');
+        $('.quanty').attr('data-drive',drive);
+        $('.persons').attr('value',persons);
+    });
+
 });
 
 function loadDoc() {
+    var isFormValid = true;
+    $(".required").each(function () {
+
+        if ($.trim($(this).val()).length == 0) {
+            $(this).addClass("highlight");
+            isFormValid = false;
+        }
+        else {
+            $(this).removeClass("highlight");
+        }
+    });
+
+    if ($('.persons').val()  == "") {
+        $('.persons').parent().addClass("highlight");
+        isFormValid = false;
+    }else{
+        $('.persons').parent().removeClass("highlight");
+    }
 
     var location = $(".location").val();
     var dest = $(".destenation").val();
@@ -27,11 +58,14 @@ function loadDoc() {
                 departureTime: new Date(Date.now()),  // for the time N milliseconds from now.
                 trafficModel: 'optimistic'
             },
-            
+
         }, callback);
 
     function callback(response, status) {
-        if (status == 'OK') {
+
+
+
+        if (status == 'OK' && isFormValid) {
             var origins = response.originAddresses;
             var destinations = response.destinationAddresses;
 
@@ -39,58 +73,70 @@ function loadDoc() {
                 var results = response.rows[i].elements;
                 for (var j = 0; j < results.length; j++) {
                     var element = results[j];
-                    var distance = element.distance.text;
-                    var duration = element.duration.text;
+                    var distance = element.distance.value;
+                    var duration = element.duration.value;
                     var from = origins[i];
                     var to = destinations[j];
 
                     var kilometerTarief = 0;
                     var startTarief = 0;
                     var tijdTarief = 0;
+                    var drive = $('.quanty').attr('data-drive');
+
+                    console.log(drive);
+                    if (drive == 'car') {
+                        kilometerTarief = 1.40;
+                        startTarief = 3;
+                    }else{
+                        kilometerTarief = 1.15;
+                        startTarief = 3;
+                    }
 
 
-                    $('select option').each(function() {
-                        if ($('.car').is(':selected')){
-                            kilometerTarief = 2.5;
-                            startTarief = 2.97;
-                            tijdTarief = 0.36;
-                          }
-                        else{
-                            kilometerTarief = 4;
-                            startTarief = 6.04;
-                            tijdTarief = 0.41;
+                    var location = origins[0]; // the string to check against
+                    var destination = destinations[0]; // the string to check against
+                    var substrings = ['schiphol', 'Airport Schiphol', 'Amsterdam Airport Schiphol'],
+                        length = substrings.length;
+                    while (length--) {
+                        if (destination.indexOf(substrings[length]) != -1) {
+                            kilometerTarief = 1;
+                            startTarief = 0;
                         }
+
+                        if (location.indexOf(substrings[length]) != -1) {
+                            kilometerTarief = 1;
+                            startTarief = 0;
+                        }
+                    }
+
+
+
+                    var distanceTotal = Math.round( distance/1000 * 10 ) / 10;
+                    //var priceTime = duration;//.replace(/[^0-9$.,]/g, '');
+                    var druationToal =  Math.ceil(duration/60);
+
+
+                    var totalprice = distanceTotal * kilometerTarief + startTarief;
+                    var total =  totalprice;
+                    total = total.toFixed(2);
+                    var price = total;
+
+
+
+                    $('.totalDistance-count').html(distanceTotal);
+                    $('.totalTime-count').html(druationToal);
+                    $('.totalPrice-count').html(price);
+
+                    $('.totalDistance-count,.totalPrice-count,.totalTime-count').counterUp({
+                        delay: 10,
+                        time: 1000,
+                        offset: 70,
+                        beginAt: 100,
                     });
 
-                    var distanceTotal = distance.replace(/[^0-9$.,]/g, '');
-                    var priceTime = duration.replace(/[^0-9$.,]/g, '');
-                    var timeTotal =  parseFloat(priceTime.replace(',','.').replace(' ',''));
+                        $('.calculate').hide();
+                        $('.reserveer').show();
 
-                    var pricetimeTotal = timeTotal;
-
-                    var totalprice = Math.ceil(parseFloat(distanceTotal.replace(',','.').replace(' ','')) * kilometerTarief + startTarief + pricetimeTotal);
-                    var total = "€"+totalprice;
-
-                    $('.totalDistance').html(distance);
-                    $('.totalTime').html(duration);
-                    $('.totalPrice').html(total);
-                    console.log('dura = '+duratidistanceon);
-                    console.log('Time = '+duration);
-                    console.log('Price = '+total);
-
-
-
-                    $('.totalDistance .Counter').each(function () {
-                        $(this).prop('Counter',0).animate({
-                            Counter: $(this).text()
-                        }, {
-                            duration: 4000,
-                            easing: 'swing',
-                            step: function (now) {
-                                $(this).text(Math.ceil(now));
-                            }
-                        });
-                    });
 
 
                 }

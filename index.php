@@ -17,10 +17,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 <script type="text/javascript" src="/assets/js/lelystad-airport.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
 
 
 
 <body>
+
 <script type="text/javascript">
 
     var placeSearch, autocomplete;
@@ -37,7 +40,9 @@
 
 
     function fillInAddress() {
-        autocomplete.getPlace();
+
+        autocomplete_location.getPlace();
+        autocomplete_destination.getPlace();
         // Get each component of the address from the place details
         // and fill the corresponding field on the form.
     }
@@ -47,18 +52,24 @@
     function initAutocomplete() {
         // Create the autocomplete object, restricting the search to geographical
         // location types.
-        autocomplete = new google.maps.places.Autocomplete(
+
+        autocomplete_location = new google.maps.places.Autocomplete(
             /** @type {!HTMLInputElement} */(document.getElementById('autocomplete_location')),
             {types: ['geocode']});
 
 
-        autocomplete = new google.maps.places.Autocomplete(
+        autocomplete_destination = new google.maps.places.Autocomplete(
             /** @type {!HTMLInputElement} */(document.getElementById('autocomplete_destination')),
             {types: ['geocode']});
+
+        autocomplete_location.setComponentRestrictions({'country': ['nl']});
+        autocomplete_destination.setComponentRestrictions({'country': ['nl']});
         // When the user selects an address from the dropdown, populate the address
         // fields in the form.
-        autocomplete.setComponentRestrictions({'country': ['nl']});
-        autocomplete.addListener('place_changed', fillInAddress);
+
+        autocomplete_location.addListener('place_changed', fillInAddress);
+        autocomplete_destination.addListener('place_changed', fillInAddress);
+
 
     }
 
@@ -96,19 +107,23 @@
     <div class="container">
 
 
-        <div class="row" >
+        <div class="row">
             <div class="col-md-12">
+                <div class="social bounceIn animated">
+                    <div class="facebook"></div>
+                    <div class="whatsapp"></div>
+                </div>
                 <div class="jumbotron vertical-center">
-                     <div class="col-md-8">
-                         <div class="title text-center fadeInDownBig animated">
-                             <h3>Taxi Lelystad-Airport</h3>
+                     <div class="col-md-10">
+                         <div class="title text-center fadeInDown animated">
+                             <h3>Taxi<br> Lelystad <br> Airport</h3>
                          </div>
 
-                         <form class="fadeInUp animated">
+                         <form class="fadeIn animated">
                              <div class="form-group">
                                  <div class="input-group mb-2 mr-sm-2 mb-sm-0wn ">
                                      <div class="input-group-addon"><i class="fa fa-crosshairs" aria-hidden="true"></i></div>
-                                     <input type="text" name="location" class="form-control location"
+                                     <input type="text" name="location" class="form-control location required"
                                             id="autocomplete_location"
                                             placeholder="Kies vertrek punt"  value="">
                                  </div>
@@ -116,51 +131,64 @@
                                  <div class="form-group">
                                      <div class="input-group mb-2 mr-sm-2 mb-sm-0wn ">
                                          <div class="input-group-addon"><i class="fa fa-map-marker" aria-hidden="true"></i></div>
-                                         <input type="text" name="location" class="form-control destenation"
+                                         <input type="text" name="location" class="form-control destenation required"
                                          id="autocomplete_destination"
                                                 placeholder="Kies bestemming"  value="">
                                      </div>
 
                                      <div class="form-group">
                                          <div class="input-group mb-2 mr-sm-2 mb-sm-0wn ">
-                                            <div class="input-group-addon"><i class="fa fa-users" aria-hidden="true"></i></div>
-                                             <select name="location" class="form-control mb-2 mr-sm-2 mb-sm-0 option"id="">
-                                                 <option selected >Aantal personen</option>
-                                                 <option name="count[]" value="1">1 - 4</option>
-                                                 <option name="count[]" value="2">5 - 8</option>
-                                             </select>
-                                             <div class="input-group-addon nocolor"><i class="fa
-                                             fa-caret-down" aria-hidden="true"></i></div>
+                                            <div class="input-group-addon"><i class="fa fa-users"aria-hidden="true">&nbsp;&nbsp;</i></div>
+<!--                                             <select name="location" class="form-control mb-2 mr-sm-2 mb-sm-0 option selectpicker-->
+<!--                                             "id="quanty">-->
+<!--                                                 <option selected >Aantal personen</option>-->
+<!--                                                 <option name="count[]" value="1">1 - 4</option>-->
+<!--                                                 <option name="count[]" value="2">5 - 8</option>-->
+<!--                                             </select>-->
+
+                                             <div class="dropdown">
+                                                 <div class="dropdown-toggle quanty" data-drive="" id="drop4"
+                                                       role="button"data-toggle="dropdown" href="#" >
+                                                <input readonly class="persons" data-drive="car" value=""
+                                                       placeholder="Aantal personen">
+                                                     <b class="caret"></b></div> <!--Here-->
+                                                 <!-- Link or button to toggle dropdown -->
+                                                 <ul class="dropdown-menu absolute" role="menu"
+                                                     aria-labelledby="dLabel" >
+                                                     <li><a tabindex="-1" data-person="1 - 4" data-drive="car">1 - 4</a></li>
+                                                     <li><a tabindex="-1" data-person="5 - 8" data-drive="bus">5 - 8</a></li>
+
+                                                 </ul>
+                                             </div>
+
+<!--                                             <div class="input-group-addon nocolor"><i class="fa-->
+<!--                                             fa-caret-down" aria-hidden="true"></i></div>-->
                                      </div>
                                      </div>
                              </div>
                          </form>
                      </div> <!-- indicator -->
-                    <div class="row indicator">
-                            <div class="col-md-4">
-                                    <div class="text-center">
+                    <div class="row  vertical-center-payoff fadeIn animated">
+                            <div class="text-center col-md-4 col-sm-4 col-4">
                                         <div class="img distance"></div>
-                                        <div class="totalDistance count">0 KM</div>
-                                    </div>
+                                        <div class="totalDistance"><span class="totalDistance-count">0</span> KM</div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="text-center">
+                            <div class="text-center col-md-4 col-sm-4 col-4">
                                     <div class="img time"></div>
-                                    <div class="totalTime">0 MIN</div>
-                                </div>
+                                    <div class="totalTime"><span class="totalTime-count">0</span> MIN</div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="text-center">
+                            <div class=" text-center col-md-4 col-sm-4 col-4">
                                     <div class="img pay"></div>
-                                    <div class="totalPrice">€ 0</div>
-                                </div>
+                                    <div class="totalPrice">€ <span class="totalPrice-count">0</span></div>
                             </div>
                         </div>
                     <!-- end indicator -->
                     <div class="row">
                         <div class="col-md-6 offset-md-3">
                             <div class="text-center">
-                                <button type="button" class="btn btn-secondary button calculate">Route bereken </button>
+                                <button type="button" class="btn btn-secondary button calculate">Route berekenen
+                                </button>
+                                <button type="button" class="btn btn-primary reserveer">taxi Reserveren</button>
                             </div>
                         </div>
                     </div>
@@ -179,7 +207,7 @@
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <div class="text-center">
-                <div class="title-cop"><h2>Taxi Lelystad-Airport</h2></div>
+                <div class="title-cop"><h2>Lelystad-Airport</h2></div>
                 <div class="divider"></div>
             </div>
         </div>
@@ -210,18 +238,47 @@
         </div>
     </div>
     </div>
-    <div class="row">
-        <div class="col-md-6">
-           <div class="quoute">
-               <p>
-                   “ Lorem ipsum dolor sit atur. Excepteur sint occae dsadsafsgfsgdgfgfgfd”
-               </p>
-           </div>
+    <div class="row section3">
+
+        <div class="col-lg-4 col-md-9 col-8 col-sm-8 drivers">
+            <div class="quoute quoute1">
+                <p>
+                    “Lorem ipsum dolor sit atur. Excepteur sint occae”
+                </p>
+                <div class="driver">
+                    <span class="name"><p>Meloudi Zaki</p></span>
+                    <span class="function"><p>Taxi driver</p></span>
+                </div>
+               </div>
+
+            </div>
+        <div class="col-lg-2 col-md-3 col-4 col-sm-3 drivers">
+            <div class="person1"></div>
         </div>
-        <div class="col-md-6">
-            sdsd
+
+        <!-- Add the extra clearfix for only the required viewport -->
+        <div class="clearfix hidden-sm-up"></div>
+        <div class="col-lg-2 col-md-3 col-4 col-sm-3 drivers">
+            <div class="person2"></div>
+        </div>
+        <div class="col-lg-4 col-md-9 col-8 col-sm-8 drivers">
+            <div class="quoute quoute2">
+                <p>
+                    “Lorem ipsum dolor sit atur. Excepteur sint occae”
+                </p>
+                <div class="driver">
+                    <span class="name"><p>Meloudi Zaki</p></span>
+                    <span class="function"><p>Taxi driver</p></span>
+                </div>
+            </div>
+
+        </div>
+
+        </div>
+
         </div>
     </div>
+
 </div>
 
 <div class="footer">
@@ -241,7 +298,10 @@
 
 <!-- end first section -->
 <script type="text/javascript" src="/assets/js/json.js"></script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.counterup.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.counterup.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqut4oPHakxngbilRwB52oadxSNlbB3fg&libraries=places&callback=initAutocomplete" async defer></script>
 </body>
 </html>
