@@ -188,7 +188,7 @@
                             <div class="text-center">
                                 <button type="button" class="btn btn-secondary button calculate">Route berekenen
                                 </button>
-                                <button type="button" class="btn btn-primary reserveer">taxi Reserveren</button>
+                                <button href="tel:555-555-5555" type="button" class="btn btn-primary reserveer">taxi Reserveren</button>
                             </div>
                         </div>
                     </div>
